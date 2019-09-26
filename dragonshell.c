@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdio.h>
 
 /**
  * @brief Tokenize a C string
@@ -23,19 +24,29 @@ void tokenize(char* str, const char* delim, char ** argv) {
 void loop(void){
 
     //initialize / declare variables
-    char *message = "dragonshell > ";
-    int length = sizeof(char)*strlen(message);
-    int SIZE = 100;
-    char data[SIZE];
+    int SIZE = 256;
+    char input[SIZE];
+    int status = 1;
+    char cwd[SIZE];
 
     //create loop
     do{
+        printf("dragonshell > ");
+        scanf("%s", input);
 
-        write(1, message, length);
+        if (strcmp("exit", input) == 0) {
+            printf("Exiting\n");
+            status = 0;
+        }
 
-        read(1,data,100);
+        if (strcmp("pwd", input) == 0) {
+            getcwd(cwd, sizeof(cwd));
+            printf("%s", cwd);
+        }
 
-    } while(strlen(data)>0);
+
+
+    } while(status != 0);
 }
 
 int main(int argc, char **argv) {
@@ -44,15 +55,8 @@ int main(int argc, char **argv) {
     // tokenize the input, run the command(s), and print the result
     // do this in a loop
 
-    //declare message pointer and byte length
-    char *welcome = "Welcome to Dragonshell!";
-    int length = sizeof(char)*strlen(welcome);
-
     //write welcome message
-    write(1,welcome,length);
-
-    //write welcome message
-    write(1,"\n",1);
+    printf("Welcome to DragonShell\n");
 
     //create loop
     loop();
