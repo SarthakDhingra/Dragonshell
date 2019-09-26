@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include "handler.h"
 
 /**
  * @brief Tokenize a C string
@@ -29,20 +30,37 @@ void loop(void){
     int status = 1;
     char cwd[SIZE];
 
+    char *input_split[10];
+
     //create loop
     do{
+        //print shell
         printf("dragonshell > ");
         scanf("%s", input);
 
-        if (strcmp("exit", input) == 0) {
-            printf("Exiting\n");
-            status = 0;
+        //toeknize input
+        tokenize(input, " ", input_split);
+
+        for (int i=0;i<10;i++){
+            printf("\n%s %d", input_split[i],i);
         }
 
-        if (strcmp("pwd", input) == 0) {
-            getcwd(cwd, sizeof(cwd));
-            printf("%s", cwd);
-        }
+        // printf("%s", input_split[1]);
+
+        // //handle exit case
+        // if (strcmp("exit", &input[0]) == 0) {
+        //     status = exit_program();
+        // }
+        //
+        // //handle pwd case
+        // if (strcmp("pwd", &input[0]) == 0) {
+        //     pwd();
+        // }
+        //
+        // if (strcmp("cd", &input[0]) == 0) {
+        //     printf("%s", &input[1]);
+        //
+        // }
 
 
 
@@ -63,11 +81,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-
-//questions:
-//can I use strlen/sizeof (in glibc?). If not what to use instead
-//can I use newline in loop
-//is loop the best way to do it
-//can we use strcmp, if not how should I compare strings
-//what headers can i not use (functions from them)
