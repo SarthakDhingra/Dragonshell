@@ -1,10 +1,11 @@
-#ifndef _handler_h_
-#define _handler_h_
+#ifndef HANDLER
+#define HANDLER
 
-void pwd(void);
+#include <vector>
+#include <iostream>
 
-int exit_program(void);
-
-void change_directory(const char *path);
+void pwd();
+void change_directory(std::string &path);
+int exit_program();
 
 #endif
