@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "handler.h"
+#include <stdlib.h>
 
 /**
  * @brief Tokenize a C string
@@ -25,46 +26,51 @@ void tokenize(char* str, const char* delim, char ** argv) {
 void loop(void){
 
     //initialize / declare variables
-    int SIZE = 256;
-    char input[SIZE];
     int status = 1;
-    char cwd[SIZE];
-
     char *input_split[10];
+    char *input = NULL;
+    size_t size = 0;
 
     //create loop
     do{
         //print shell
         printf("dragonshell > ");
-        scanf("%s", input);
+
+        //read input
+        ssize_t num  = getline(&input, &size, stdin);
+
+        //handle error
+        if (num == -1) {
+            perror("getline");
+        }
 
         //toeknize input
         tokenize(input, " ", input_split);
 
-        for (int i=0;i<10;i++){
-            printf("\n%s %d", input_split[i],i);
+        // printf("%s", input_split[0]);
+
+        printf("%d", strcmp("cd",input_split[0]));
+
+        //handle exit case
+        if (strcmp("exit ", input_split[0]) == 0) {
+            status = exit_program();
         }
 
-        // printf("%s", input_split[1]);
+        //handle pwd case
+        if (strcmp("pwd", input_split[0]) == 0) {
+            pwd();
+        }
 
-        // //handle exit case
-        // if (strcmp("exit", &input[0]) == 0) {
-        //     status = exit_program();
-        // }
-        //
-        // //handle pwd case
-        // if (strcmp("pwd", &input[0]) == 0) {
-        //     pwd();
-        // }
-        //
-        // if (strcmp("cd", &input[0]) == 0) {
-        //     printf("%s", &input[1]);
-        //
-        // }
+        if (strcmp("cd", input_split[0]) == 0) {
+            change_directory(input_split[1]);
+        }
 
 
 
     } while(status != 0);
+
+    //free memory
+    free(input);
 }
 
 int main(int argc, char **argv) {
