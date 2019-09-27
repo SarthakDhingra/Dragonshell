@@ -5,7 +5,7 @@
 #include <iostream>
 
 void pwd();
-void change_directory(std::string &path);
+void change_directory(char const *path);
 int exit_program();
 
 #endif
