@@ -47,13 +47,17 @@ void loop(void){
       pwd();
     }
 
-    // if (input_list[0] == "exit") {
-    //   status = exit_program();
-    // }
-    //
-    // if (input_list[0] == "cd") {
-    //   change_directory(input_list[1]);
-    // }
+    if (input_list[0] == "exit") {
+      status = exit_program();
+    }
+
+    if (input_list[0] == "cd") {
+      if (input_list.size() < 2) {
+        cout << "expected argument to \"cd\"\n";
+      }
+      change_directory(input_list[1].c_str());
+    }
+
 
   }
 

@@ -4,7 +4,7 @@ CC = g++
 #compiler flags:
 # -g adds debugging info to exe
 # -Wall turnos on most compiler warning
-CFLAGS = -Wall -std=c++11
+CFLAGS = -g -Wall -std=c++11
 
 OBJECTS = dragonshell.o handler.o
 
