@@ -47,14 +47,13 @@ void loop(void){
       pwd();
     }
 
-    if (input_list[0] == "exit") {
-      status = exit_program();
-    }
-
-    if (input_list[0] == "cd") {
-      change_directory(input_list[1]);
-    }
-
+    // if (input_list[0] == "exit") {
+    //   status = exit_program();
+    // }
+    //
+    // if (input_list[0] == "cd") {
+    //   change_directory(input_list[1]);
+    // }
 
   }
 

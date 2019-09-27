@@ -1,5 +1,5 @@
 #the compiler
-CC = gcc
+CC = g++
 
 #compiler flags:
 # -g adds debugging info to exe

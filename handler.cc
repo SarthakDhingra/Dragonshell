@@ -14,11 +14,11 @@ void pwd(){
     cout << "\n";
 }
 
-void change_directory(std::string &path){
-    cout << path;
-}
-
-int exit_program(){
-    cout << "Exiting";
-    return 0;
-}
+// void change_directory(std::string &path){
+//     cout << path;
+// }
+//
+// int exit_program(){
+//     cout << "Exiting";
+//     return 0;
+// }
