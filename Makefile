@@ -1,12 +1,18 @@
-dragonshell: handler.o dragonshell.o
-	gcc -Wall -std=c99 -g -o dragonshell handler.o dragonshell.o
-drgaonshell.o: dragonshell.oc
-	gcc -Wall -std=c99 -g -c dragonshell.c
-handler.o: handler.c
-	gcc -Wall -std=c99 -g -c handler.c
+#the compiler
+CC = gcc
+
+#compiler flags:
+# -g adds debugging info to exe
+# -Wall turnos on most compiler warning
+CFLAGS = -Wall -std=c++11
+
+OBJECTS = dragonshell.o handler.o
+
+dragonshell: $(OBJECTS)
+	$(CC) -o dragonshell $(OBJECTS)
+dragonshell.o: dragonshell.cc handler.h
+	$(CC) $(CFLAGS) -c dragonshell.cc -o dragonshell.o
+handler.o: handler.cc handler.h
+	$(CC) $(CFLAGS) -c handler.cc -o handler.o
 clean:
-	rm dragonshell
-	rm -f test *.o
-
-
-	#c flags
+	rm *.o $(OBJECTS)
