@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdio>
 #include "handler.h"
+#include <typeinfo>
 
 using namespace std;
 
@@ -62,6 +63,10 @@ void loop(void){
         show_path();
     }
 
+    if (input_list[0] == "a2path") {
+        vector<string> new_path = tokenize(input_list[1],":");
+        append_path(new_path[1]);
+    }
 
   }
 

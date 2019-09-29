@@ -8,7 +8,7 @@ using namespace std;
 
 char cwd[256];
 
-vector<string> path = {"/bin/", "/usr/bin/"};
+vector<string> path = {"/bin/","/usr/bin/"};
 
 void pwd(){
   getcwd(cwd, sizeof(cwd));
@@ -42,5 +42,9 @@ void show_path() {
     }
 
     cout << "\n";
+}
+
+void append_path(string item) {
+    path.push_back(item);
 
 }
