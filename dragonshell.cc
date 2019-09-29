@@ -59,7 +59,7 @@ void loop(void){
     }
 
     if (input_list[0] == "$PATH") {
-        path();
+        show_path();
     }
 
 

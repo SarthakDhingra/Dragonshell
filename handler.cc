@@ -8,6 +8,8 @@ using namespace std;
 
 char cwd[256];
 
+vector<string> path = {"/bin/", "/usr/bin/"};
+
 void pwd(){
   getcwd(cwd, sizeof(cwd));
   cout << cwd;
@@ -26,4 +28,19 @@ void change_directory(char const *path){
 int exit_program(){
   cout << "Exiting\n";
   return 0;
+}
+
+void show_path() {
+    cout << "Current PATH: ";
+
+    for (vector<string>::iterator i = path.begin(); i != path.end(); ++i) {
+        cout << *i;
+
+        if (*i != path.back()){
+            cout << ":";
+        }
+    }
+
+    cout << "\n";
+
 }
