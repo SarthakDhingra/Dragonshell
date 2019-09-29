@@ -24,6 +24,6 @@ void change_directory(char const *path){
 }
 
 int exit_program(){
-  cout << "Exiting";
+  cout << "Exiting\n";
   return 0;
 }

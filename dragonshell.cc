@@ -58,6 +58,10 @@ void loop(void){
       change_directory(input_list[1].c_str());
     }
 
+    if (input_list[0] == "$PATH") {
+        path();
+    }
+
 
   }
 
