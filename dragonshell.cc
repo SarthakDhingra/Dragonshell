@@ -32,6 +32,7 @@ std::vector<std::string> tokenize(const std::string &str, const char *delim) {
   return tokens;
 }
 
+
 void loop(void){
 
   char input[256];
@@ -67,7 +68,6 @@ void loop(void){
         vector<string> new_path = tokenize(input_list[1],":");
         append_path(new_path[1]);
     }
-
   }
 
 }
