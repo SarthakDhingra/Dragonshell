@@ -49,24 +49,28 @@ void loop(void){
       pwd();
     }
 
-    if (input_list[0] == "exit") {
+    else if (input_list[0] == "exit") {
       status = exit_program();
     }
 
-    if (input_list[0] == "cd") {
+    else if (input_list[0] == "cd") {
       if (input_list.size() < 2) {
-        cout << "expected argument to \"cd\"\n";
+        cout << "expected argument to be \"cd\"\n";
       }
       change_directory(input_list[1].c_str());
     }
 
-    if (input_list[0] == "$PATH") {
+    else if (input_list[0] == "$PATH") {
         show_path();
     }
 
-    if (input_list[0] == "a2path") {
+    else if (input_list[0] == "a2path") {
         vector<string> new_path = tokenize(input_list[1],":");
         append_path(new_path[1]);
+    }
+
+    else {
+        external_execution(input_list);
     }
   }
 
