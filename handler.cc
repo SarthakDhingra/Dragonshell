@@ -46,9 +46,34 @@ void show_path() {
     cout << "\n";
 }
 
-void execute(const char* cmd, vector<string> args) {
+void execute(const char* cmd, vector<string> input) {
+    char *argv[input.size()];
+    char *env[] = {NULL};
+    int i = 0;
+    int pid;
+    vector<string> v2 = vector<string>(input.begin() + 1, input.end());
 
-    cout << "FOUND";
+    for (string test : v2) {
+        //fix this
+        argv[i] = test.c_str();
+        i++;
+    }
+
+    argv[i] = NULL;
+
+    if ((pid = fork()) == -1) {
+        perror("fork error");
+    }
+
+    else if (pid == 0)
+        if(execve(cmd, argv, env) == -1){
+            perror("execve");
+        }
+
+
+    //confirm
+    //lab example was it /bin/ls ls -al
+    // /bin/ls/ ls -al?
 
 }
 
@@ -57,15 +82,16 @@ void external_execution(vector<string> input) {
     const char* cmd_2;
     int succ = 0;
 
-    for (vector<string>::iterator i = path.begin(); i != path.end(); ++i) {
+    for (string wow: path) {
+        wow += cmd_1;
+        cmd_2 = wow.c_str();
 
-        cmd_2 = *i + cmd_1;
-        succ = 0;
         if (access(cmd_2, F_OK) == 0){
-            succ =1;
+            succ = 1;
             execute(cmd_2, input);
             return;
         }
+
     }
 
     if (access(cmd_1, F_OK) == 0){
@@ -83,3 +109,10 @@ void append_path(string item) {
     path.push_back(item);
 
 }
+
+//argv** thats const char size tokenzied array +1
+// iterate through tokenized input and add to argv
+//terminate argv w NULL
+//iterate through paths and create const char*
+
+//kil process
