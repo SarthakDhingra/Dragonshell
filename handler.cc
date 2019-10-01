@@ -2,7 +2,7 @@
 #include <iostream>
 #include <unistd.h>
 #include "handler.h"
-
+#include <signal.h>
 #include <typeinfo>
 
 
@@ -54,26 +54,26 @@ void execute(const char* cmd, vector<string> input) {
     vector<string> v2 = vector<string>(input.begin() + 1, input.end());
 
     for (string test : v2) {
-        //fix this
-        argv[i] = test.c_str();
+        argv[i] = (char *)test.c_str();
         i++;
     }
 
     argv[i] = NULL;
 
-    if ((pid = fork()) == -1) {
-        perror("fork error");
-    }
+    execve(cmd, argv, env);
 
-    else if (pid == 0)
-        if(execve(cmd, argv, env) == -1){
-            perror("execve");
-        }
-
-
-    //confirm
-    //lab example was it /bin/ls ls -al
-    // /bin/ls/ ls -al?
+    // if ((pid = fork()) == -1) {
+    //     perror("fork error");
+    // }
+    //
+    // else if (pid == 0) {
+    //     if(execve(cmd, argv, env) == -1){
+    //         perror("execve");
+    //     }
+    //     else {
+    //         kill(pid, SIGKILL);
+    //     }
+    // }
 
 }
 
@@ -82,11 +82,19 @@ void external_execution(vector<string> input) {
     const char* cmd_2;
     int succ = 0;
 
+    if (access(cmd_1, F_OK) == 0){
+        cout << "1";
+        succ = 1;
+        execute(cmd_1, input);
+        return;
+    }
+
     for (string wow: path) {
         wow += cmd_1;
         cmd_2 = wow.c_str();
 
         if (access(cmd_2, F_OK) == 0){
+            cout << "2";
             succ = 1;
             execute(cmd_2, input);
             return;
@@ -94,11 +102,6 @@ void external_execution(vector<string> input) {
 
     }
 
-    if (access(cmd_1, F_OK) == 0){
-        succ = 1;
-        execute(cmd_1, input);
-        return;
-    }
 
     if (!succ) {
         cout << "Error: Program not found";
