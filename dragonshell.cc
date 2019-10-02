@@ -5,6 +5,8 @@
 #include <cstdio>
 #include "handler.h"
 #include <typeinfo>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 using namespace std;
 
