@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <typeinfo>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 using namespace std;
 
