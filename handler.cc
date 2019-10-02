@@ -4,7 +4,7 @@
 #include "handler.h"
 #include <signal.h>
 #include <typeinfo>
-
+#include <fcntl.h>
 
 using namespace std;
 
@@ -109,6 +109,23 @@ void external_execution(vector<string> input) {
 void append_path(string item) {
     path.push_back(item);
 
+}
+
+void redirect_output(vector<string> output) {
+    for (string out: output) {
+        cout << out;
+    }
+
+    int file_desc = open("sample.txt", O_CREAT | O_WRONLY);
+
+    if(file_desc < 0) {
+        cout << "Error opening the file" << "\n";
+    }
+
+    dup2(file_desc, 1);
+    cout << "gekyume";
+    close(file_desc);
+    
 }
 
 //argv** thats const char size tokenzied array +1

@@ -32,6 +32,19 @@ std::vector<std::string> tokenize(const std::string &str, const char *delim) {
   return tokens;
 }
 
+bool check_arrow(vector<string> input) {
+
+    bool check = false;
+
+    for (string piece: input) {
+        if (piece == ">") {
+            check=true;
+        }
+    }
+
+    return check;
+}
+
 
 void loop(void){
 
@@ -39,13 +52,21 @@ void loop(void){
   int status = 1;
   vector<string> input_list;
 
+
   while(status){
     cout << "dragonshell > ";
     cin.getline(input,sizeof(input));
 
     input_list = tokenize(input," ");
 
-    if (input_list[0] == "pwd") {
+    bool redirect = check_arrow(input_list);
+
+    if (redirect) {
+        vector<string> output = tokenize(input, ">");
+        redirect_output(output);
+    }
+
+    else if (input_list[0] == "pwd") {
       pwd();
     }
 
