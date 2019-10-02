@@ -45,8 +45,6 @@ void loop(void){
 
     input_list = tokenize(input," ");
 
-    cout << input_list[0];
-
     if (input_list[0] == "pwd") {
       pwd();
     }
@@ -72,8 +70,8 @@ void loop(void){
     }
 
     else {
-        cout << "please";
         external_execution(input_list);
+
     }
   }
 

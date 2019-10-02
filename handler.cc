@@ -47,33 +47,34 @@ void show_path() {
 }
 
 void execute(const char* cmd, vector<string> input) {
-    char *argv[input.size()];
+
+    char *argv[input.size()+1];
     char *env[] = {NULL};
     int i = 0;
     int pid;
-    vector<string> v2 = vector<string>(input.begin() + 1, input.end());
 
-    for (string test : v2) {
+    for (string test : input) {
         argv[i] = (char *)test.c_str();
         i++;
     }
 
     argv[i] = NULL;
 
-    execve(cmd, argv, env);
+    if ((pid = fork()) == -1) {
+        perror("fork error");
+    }
 
-    // if ((pid = fork()) == -1) {
-    //     perror("fork error");
-    // }
-    //
-    // else if (pid == 0) {
-    //     if(execve(cmd, argv, env) == -1){
-    //         perror("execve");
-    //     }
-    //     else {
-    //         kill(pid, SIGKILL);
-    //     }
-    // }
+    else if (pid == 0) {
+        if(execve(cmd, argv, env) == -1){
+            perror("execve");
+        }
+        _exit(0);
+
+    }
+
+    else {
+        wait(NULL);
+    }
 
 }
 
@@ -83,10 +84,8 @@ void external_execution(vector<string> input) {
     int succ = 0;
 
     if (access(cmd_1, F_OK) == 0){
-        cout << "1";
         succ = 1;
         execute(cmd_1, input);
-        return;
     }
 
     for (string wow: path) {
@@ -94,10 +93,9 @@ void external_execution(vector<string> input) {
         cmd_2 = wow.c_str();
 
         if (access(cmd_2, F_OK) == 0){
-            cout << "2";
             succ = 1;
             execute(cmd_2, input);
-            return;
+            break;
         }
 
     }
