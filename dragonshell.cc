@@ -63,7 +63,9 @@ void loop(void){
 
     if (redirect) {
         vector<string> output = tokenize(input, ">");
-        redirect_output(output);
+        vector<string> command = tokenize(output[0], " ");
+        vector<string> location = tokenize(output[1], " ");
+        redirect_output(command, location[0]);
     }
 
     else if (input_list[0] == "pwd") {

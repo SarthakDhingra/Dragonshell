@@ -111,21 +111,48 @@ void append_path(string item) {
 
 }
 
-void redirect_output(vector<string> output) {
-    for (string out: output) {
-        cout << out;
+void redirect_output(vector<string> output, string location) {
+    int pid;
+
+    const char * loc = (char*)location.c_str();
+
+    if ((pid = fork()) == -1) {
+        perror("fork error");
     }
 
-    int file_desc = open("sample.txt", O_CREAT | O_WRONLY);
+    else if (pid == 0) {
+        int file_desc = open(loc, O_CREAT | O_WRONLY);
+        if(file_desc < 0) {
+            cout << "Error opening the file" << "\n";
+        }
 
-    if(file_desc < 0) {
-        cout << "Error opening the file" << "\n";
+        dup2(file_desc, 1);
+        external_execution(output);
+        close(file_desc);
+        _exit(0);
+
     }
 
-    dup2(file_desc, 1);
-    cout << "gekyume";
-    close(file_desc);
-    
+    else {
+        wait(NULL);
+    }
+
+
+
+    // for (string out: output) {
+    //     cout << out;
+    // }
+    //
+    // int file_desc = open("sample.txt", O_CREAT | O_WRONLY);
+    //
+    // if(file_desc < 0) {
+    //     cout << "Error opening the file" << "\n";
+    // }
+    //
+    // dup2(file_desc, 1);
+    // cout << "gekyume";
+    // close(file_desc);
+
 }
 
 //argv** thats const char size tokenzied array +1
