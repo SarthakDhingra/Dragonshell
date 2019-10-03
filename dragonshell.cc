@@ -32,105 +32,136 @@ std::vector<std::string> tokenize(const std::string &str, const char *delim) {
   return tokens;
 }
 
+//returns true if input has an arrow, indicating output redirection, and false otherwise
 bool check_arrow(vector<string> input) {
 
-    bool check = false;
+    //initializes bool to false
+    bool redirect = false;
 
-    for (string piece: input) {
-        if (piece == ">") {
-            check=true;
+    //iterates through input
+    for (string token: input) {
+        if (token == ">") {
+            redirect = true;
         }
     }
 
-    return check;
+    //returns bool
+    return redirect;
 }
 
+//returns true if input has pipe  and false otherwise
 bool check_pipe(vector<string> input) {
 
-    bool check = false;
+    //initializes bool to false
+    bool pipe = false;
 
-    for (string piece: input) {
-        if (piece == "|") {
-            check=true;
+    //iterates through input
+    for (string token: input) {
+        if (token == "|") {
+            pipe = true;
         }
     }
 
-    return check;
+    //returns bool
+    return pipe;
 }
 
 
 
-
+//function to run dragon shell
 void loop(void){
 
-  char input[256];
-  int status = 1;
-  vector<string> input_list;
-  vector<string> actions;
+    //declare variables
+    char input[256];
+    vector<string> input_list;
+    vector<string> actions;
 
+    //run loop for dragonshell until exit
+    while(true){
 
-  while(status){
-    cout << "dragonshell > ";
-    cin.getline(input,sizeof(input));
+        //print shell
+        cout << "dragonshell > ";
+        //get input
+        cin.getline(input,sizeof(input));
 
-    actions = tokenize(input, ";");
+        //tokenize input for multiple commands
+        actions = tokenize(input, ";");
 
-    for (string action: actions) {
+        //iterate through distinct commands
+        for (string action: actions) {
 
-        input_list = tokenize(action," ");
+            //tokenize individual command based on space
+            input_list = tokenize(action," ");
 
-        bool redirect = check_arrow(input_list);
+            //check if redirect needed
+            bool redirect = check_arrow(input_list);
 
-        bool pipe = check_pipe(input_list);
+            //check if pipe needed
+            bool pipe = check_pipe(input_list);
 
-        if (redirect) {
-            vector<string> output = tokenize(input, ">");
-            vector<string> command = tokenize(output[0], " ");
-            vector<string> location = tokenize(output[1], " ");
-            redirect_output(command, location[0]);
+            //handle redirect
+            if (redirect) {
+                vector<string> output = tokenize(input, ">");
+                vector<string> command = tokenize(output[0], " ");
+                vector<string> location = tokenize(output[1], " ");
+                redirect_output(command, location[0]);
+            }
+
+            //handle pipe
+            else if (pipe) {
+                vector<string> output = tokenize(input, ">");
+                vector<string> cmd1 = tokenize(output[0], " ");
+                vector<string> cmd2 = tokenize(output[1], " ");
+                execute_pipe(cmd1, cmd2);
+            }
+
+            //hanlde pwd
+            else if (input_list[0] == "pwd") {
+                pwd();
+            }
+
+            //hanlde exit
+            else if (input_list[0] == "exit") {
+                exit_program();
+                return;
+            }
+
+            //handle cd
+            else if (input_list[0] == "cd") {
+                //return error is not enough arguments
+                if (input_list.size() < 2) {
+                    cout << "expected argument to be \"cd\"\n";
+                }
+
+                change_directory(input_list[1].c_str());
+            }
+
+            //handle $PATH
+            else if (input_list[0] == "$PATH") {
+                show_path();
+            }
+
+            //handle a2path
+            else if (input_list[0] == "a2path") {
+                //handle errors
+                if (input_list.size() < 2) {
+                    cout << "error not enough arguments" < "\n";
+                }
+
+                vector<string> new_path = tokenize(input_list[1],":");
+                append_path(new_path[1]);
+            }
+
+            //handle running an external program
+            else {
+                external_execution(input_list);
+
+            }
+
         }
 
-        else if (pipe) {
-            vector<string> output = tokenize(input, ">");
-            vector<string> cmd1 = tokenize(output[0], " ");
-            vector<string> cmd2 = tokenize(output[1], " ");
-            execute_pipe(cmd1, cmd2);
-        }
-
-        else if (input_list[0] == "pwd") {
-          pwd();
-        }
-
-        else if (input_list[0] == "exit") {
-          status = exit_program();
-          return;
-        }
-
-        else if (input_list[0] == "cd") {
-          if (input_list.size() < 2) {
-            cout << "expected argument to be \"cd\"\n";
-          }
-          change_directory(input_list[1].c_str());
-        }
-
-        else if (input_list[0] == "$PATH") {
-            show_path();
-        }
-
-        else if (input_list[0] == "a2path") {
-            vector<string> new_path = tokenize(input_list[1],":");
-            append_path(new_path[1]);
-        }
-
-        else {
-            external_execution(input_list);
-
-        }
 
     }
-
-
-  }
 
 }
 
@@ -140,11 +171,11 @@ int main(int argc, char **argv) {
   // tokenize the input, run the command(s), and print the result
   // do this in a loop
 
+  //print welcome message
   cout << "Welcome to DragonShell!";
   cout << "\n";
 
-
-
+  //call function to start dragonshell
   loop();
 
   return 0;
