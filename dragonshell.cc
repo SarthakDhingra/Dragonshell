@@ -1,3 +1,4 @@
+//import libraries
 #include <vector>
 #include <string>
 #include <cstring>
@@ -5,7 +6,9 @@
 #include <cstdio>
 #include "handler.h"
 #include <typeinfo>
+#include <csignal>
 
+//set namespace
 using namespace std;
 
 /**
@@ -71,6 +74,7 @@ bool check_pipe(vector<string> input) {
 //function to run dragon shell
 void loop(void){
 
+
     //declare variables
     char input[256];
     vector<string> input_list;
@@ -99,8 +103,12 @@ void loop(void){
             //check if pipe needed
             bool pipe = check_pipe(input_list);
 
+            if (input_list[0] == "^C") {
+                cout << "wow";
+            }
+
             //handle redirect
-            if (redirect) {
+            else if (redirect) {
                 vector<string> output = tokenize(input, ">");
                 vector<string> command = tokenize(output[0], " ");
                 vector<string> location = tokenize(output[1], " ");
@@ -109,7 +117,8 @@ void loop(void){
 
             //handle pipe
             else if (pipe) {
-                vector<string> output = tokenize(input, ">");
+                
+                vector<string> output = tokenize(input, "|");
                 vector<string> cmd1 = tokenize(output[0], " ");
                 vector<string> cmd2 = tokenize(output[1], " ");
                 execute_pipe(cmd1, cmd2);
@@ -145,7 +154,7 @@ void loop(void){
             else if (input_list[0] == "a2path") {
                 //handle errors
                 if (input_list.size() < 2) {
-                    cout << "error not enough arguments" < "\n";
+                    cout << "error not enough arguments" << "\n";
                 }
 
                 vector<string> new_path = tokenize(input_list[1],":");
@@ -171,12 +180,26 @@ int main(int argc, char **argv) {
   // tokenize the input, run the command(s), and print the result
   // do this in a loop
 
+  //signal handling
+  struct sigaction sa;
+  sa.sa_handler = &handle_signal;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_flags = 0;
+
+  if (sigaction(SIGINT, &sa, NULL) == -1) {
+      cout << "signal error";
+  }
+
+
+
   //print welcome message
   cout << "Welcome to DragonShell!";
   cout << "\n";
 
   //call function to start dragonshell
   loop();
+
+
 
   return 0;
 }

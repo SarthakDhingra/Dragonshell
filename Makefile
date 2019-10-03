@@ -16,4 +16,4 @@ handler.o: handler.cc handler.h
 	$(CC) $(CFLAGS) -c handler.cc -o handler.o
 clean:
 	rm dragonshell
-	rm *.o $(OBJECTS)
+	rm *.o 
