@@ -2,23 +2,20 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <vector>
 #include <iostream>
-#include <unistd.h>
-#include <signal.h>
-#include <typeinfo>
-#include <fcntl.h>
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    int file_desc = open("test.txt", O_CREAT | O_WRONLY);
-    if(file_desc < 0) {
-        cout << "Error opening the file" << "\n";
-    }
+    char msg[] = "Tester", buf[100];
+    int p[2];
 
-    dup2(file_desc, 1);
-    cout << "Tester" << "\n";
-    close(file_desc);
+    pipe(p);
+
+    write(p[1], msg, sizeof(msg));
+    read(p[0], buf, sizeof(msg));
+
+    cout << buf << "\n";
+
     return 0;
 }

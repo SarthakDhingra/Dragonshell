@@ -138,21 +138,88 @@ void redirect_output(vector<string> output, string location) {
         wait(NULL);
     }
 
+}
+
+void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
+    int p[2];
+    int p1,p2;
+    int i = 0;
+    char *argv1[cmd1.size()+1];
+    char *argv2[cmd2.size()+1];
+    char *env[] = {NULL};
+
+    for (string cmd : cmd1) {
+        argv1[i] = (char *)cmd.c_str();
+        i++;
+    }
+
+    argv1[i] = NULL;
+    i = 0;
+
+    for (string cmd : cmd2) {
+        argv2[i] = (char *)cmd.c_str();
+        i++;
+    }
+
+    argv2[i] = NULL;
+
+    if (pipe(p) < 0) {
+        cout << "error";
+    }
+
+    p1 = fork();
+
+    if (p1 < 0) {
+        cout << "fork error";
+    }
+
+    //first child process is running
+    if (p1 == 0) {
+        //write process to pipe
+        close(p[0]);
+        dup2(p[1], 1);
+        close(p[1]);
+        _exit(0);
+
+        if (execve(argv1[0], argv1,env) < 0) {
+            //before this should probable check if file exists
+            cout << "couldn't execute process 1";
+        }
+    }
+    //parent process
+    else {
+        //create second child
+        p2 = fork();
+
+        if (p2 < 1) {
+            cout << "fork error";
+        }
+
+        //child process is running
+        if (p2 == 0){
+            //only need to acess read end
+            close(p[1]);
+            dup2(p[0],1);
+            close(p[1]);
+            _exit(0);
+
+            if (execve(argv2[0], argv2,env) < 0) {
+                 cout << "couldn't execute process 2";
+            }
+        } else {
+            //parrent is executing
+            //wait for two children
+            wait(NULL);
+            wait(NULL);
+
+        }
 
 
-    // for (string out: output) {
-    //     cout << out;
-    // }
-    //
-    // int file_desc = open("sample.txt", O_CREAT | O_WRONLY);
-    //
-    // if(file_desc < 0) {
-    //     cout << "Error opening the file" << "\n";
-    // }
-    //
-    // dup2(file_desc, 1);
-    // cout << "gekyume";
-    // close(file_desc);
+
+    }
+
+
+
 
 }
 

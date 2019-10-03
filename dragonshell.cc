@@ -45,6 +45,21 @@ bool check_arrow(vector<string> input) {
     return check;
 }
 
+bool check_pipe(vector<string> input) {
+
+    bool check = false;
+
+    for (string piece: input) {
+        if (piece == "|") {
+            check=true;
+        }
+    }
+
+    return check;
+}
+
+
+
 
 void loop(void){
 
@@ -61,11 +76,21 @@ void loop(void){
 
     bool redirect = check_arrow(input_list);
 
+    bool pipe = check_pipe(input_list);
+
     if (redirect) {
         vector<string> output = tokenize(input, ">");
         vector<string> command = tokenize(output[0], " ");
         vector<string> location = tokenize(output[1], " ");
         redirect_output(command, location[0]);
+    }
+
+    else if (pipe) {
+        cout << "success";
+        vector<string> output = tokenize(input, ">");
+        vector<string> cmd1 = tokenize(output[0], " ");
+        vector<string> cmd2 = tokenize(output[1], " ");
+        execute_pipe(cmd1, cmd2);
     }
 
     else if (input_list[0] == "pwd") {
