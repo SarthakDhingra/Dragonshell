@@ -66,61 +66,70 @@ void loop(void){
   char input[256];
   int status = 1;
   vector<string> input_list;
+  vector<string> actions;
 
 
   while(status){
     cout << "dragonshell > ";
     cin.getline(input,sizeof(input));
 
-    input_list = tokenize(input," ");
+    actions = tokenize(input, ";");
 
-    bool redirect = check_arrow(input_list);
+    for (string action: actions) {
 
-    bool pipe = check_pipe(input_list);
+        input_list = tokenize(action," ");
 
-    if (redirect) {
-        vector<string> output = tokenize(input, ">");
-        vector<string> command = tokenize(output[0], " ");
-        vector<string> location = tokenize(output[1], " ");
-        redirect_output(command, location[0]);
+        bool redirect = check_arrow(input_list);
+
+        bool pipe = check_pipe(input_list);
+
+        if (redirect) {
+            vector<string> output = tokenize(input, ">");
+            vector<string> command = tokenize(output[0], " ");
+            vector<string> location = tokenize(output[1], " ");
+            redirect_output(command, location[0]);
+        }
+
+        else if (pipe) {
+            vector<string> output = tokenize(input, ">");
+            vector<string> cmd1 = tokenize(output[0], " ");
+            vector<string> cmd2 = tokenize(output[1], " ");
+            execute_pipe(cmd1, cmd2);
+        }
+
+        else if (input_list[0] == "pwd") {
+          pwd();
+        }
+
+        else if (input_list[0] == "exit") {
+          status = exit_program();
+          return;
+        }
+
+        else if (input_list[0] == "cd") {
+          if (input_list.size() < 2) {
+            cout << "expected argument to be \"cd\"\n";
+          }
+          change_directory(input_list[1].c_str());
+        }
+
+        else if (input_list[0] == "$PATH") {
+            show_path();
+        }
+
+        else if (input_list[0] == "a2path") {
+            vector<string> new_path = tokenize(input_list[1],":");
+            append_path(new_path[1]);
+        }
+
+        else {
+            external_execution(input_list);
+
+        }
+
     }
 
-    else if (pipe) {
-        cout << "success";
-        vector<string> output = tokenize(input, ">");
-        vector<string> cmd1 = tokenize(output[0], " ");
-        vector<string> cmd2 = tokenize(output[1], " ");
-        execute_pipe(cmd1, cmd2);
-    }
 
-    else if (input_list[0] == "pwd") {
-      pwd();
-    }
-
-    else if (input_list[0] == "exit") {
-      status = exit_program();
-    }
-
-    else if (input_list[0] == "cd") {
-      if (input_list.size() < 2) {
-        cout << "expected argument to be \"cd\"\n";
-      }
-      change_directory(input_list[1].c_str());
-    }
-
-    else if (input_list[0] == "$PATH") {
-        show_path();
-    }
-
-    else if (input_list[0] == "a2path") {
-        vector<string> new_path = tokenize(input_list[1],":");
-        append_path(new_path[1]);
-    }
-
-    else {
-        external_execution(input_list);
-
-    }
   }
 
 }
@@ -133,6 +142,8 @@ int main(int argc, char **argv) {
 
   cout << "Welcome to DragonShell!";
   cout << "\n";
+
+
 
   loop();
 

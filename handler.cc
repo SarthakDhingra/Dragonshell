@@ -148,6 +148,7 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     char *argv2[cmd2.size()+1];
     char *env[] = {NULL};
 
+
     for (string cmd : cmd1) {
         argv1[i] = (char *)cmd.c_str();
         i++;
@@ -186,6 +187,8 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
             cout << "couldn't execute process 1";
         }
     }
+
+
     //parent process
     else {
         //create second child
@@ -214,13 +217,7 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
 
         }
 
-
-
     }
-
-
-
-
 }
 
 //argv** thats const char size tokenzied array +1
