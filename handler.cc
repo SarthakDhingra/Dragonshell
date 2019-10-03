@@ -213,7 +213,6 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     if (pipe(p) < 0) {
         cout << "error";
     }
-    cout << "hi";
 
     p1 = fork();
 
@@ -221,8 +220,6 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     if (p1 < 0) {
         cout << "fork error";
     }
-
-
 
 
     //first child process is running
@@ -237,6 +234,8 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
             //before this should probable check if file exists
             cout << "couldn't execute process 1";
         }
+
+        _exit(0);
     }
 
 
@@ -256,10 +255,11 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
             dup2(p[0],1);
             close(p[1]);
 
-
             if (execve(argv2[0], argv2,env) < 0) {
                  cout << "couldn't execute process 2";
             }
+
+            _exit(0);
 
         } else {
             //parrent is executing
