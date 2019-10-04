@@ -96,6 +96,7 @@ void loop(void){
     char input[256];
     vector<string> input_list;
     vector<string> actions;
+    char n;
 
     //run loop for dragonshell until exit
     while(true){
@@ -211,15 +212,17 @@ int main(int argc, char **argv) {
   // do this in a loop
 
   //signal handling
-  struct sigaction c,z;
+  struct sigaction sa;
 
-  c.sa_flags = SA_RESTART;
-  sigemptyset(&c.sa_mask);
-  c.sa_handler = &handle_signal;
+  sa.sa_flags = SA_RESTART;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_handler = &handle_signal;
+  sigaction(SIGINT, &sa, NULL);
+  sigaction(SIGTSTP, &sa, NULL);
 
-  if (sigaction(SIGINT, &c, NULL) == -1) {
-      perror("sigaction");
-  }
+  // if (sigaction(SIGINT, &c, NULL) == -1) {
+  //     perror("sigaction");
+  // }
 
 
 
@@ -235,11 +238,6 @@ int main(int argc, char **argv) {
 
 
 //TO DO
-// - handle signal so dont need to press enter
-// - fix pipe so dont need to press enter
-// - fix background process so don't need to press enter
 // - fix multiple commands so it works
-// - fix exit so it gracefull terminates the program
 // - fix makefile
-// - handle ^Z interrupt
 // - review assignment spec

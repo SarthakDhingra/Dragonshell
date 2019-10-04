@@ -14,6 +14,7 @@ using namespace std;
 //declare / initialize variables
 char cwd[256];
 vector<string> path = {"/bin/","/usr/bin/"};
+vector<pid_t> pids = {};
 
 //function to handle pwd
 void pwd(){
@@ -42,6 +43,12 @@ void change_directory(char const *path){
 void exit_program(){
 
     //print message
+    for (pid_t pid: pids) {
+        kill(pid, SIGTERM);
+    }
+    
+    pids.clear();
+
     cout << "Exiting\n";
 
 }
@@ -74,7 +81,7 @@ void execute(const char* cmd, vector<string> input) {
     char *argv[input.size()+1];
     char *env[] = {NULL};
     int i = 0;
-    int pid;
+    pid_t pid;
 
     //append command and arguments to array of character pointers
     for (string test : input) {
@@ -92,6 +99,7 @@ void execute(const char* cmd, vector<string> input) {
 
     //enter child process
     else if (pid == 0) {
+        pids.push_back(pid);
         //return error if necessary
         if(execve(cmd, argv, env) == -1){
             perror("execve");
@@ -149,7 +157,7 @@ void append_path(string item) {
 //function to handle output redirection
 void redirect_output(vector<string> output, string location) {
     //declare and init variables
-    int pid;
+    pid_t pid;
     const char * loc = (char*)location.c_str();
 
     //report fork error if necessary
@@ -159,6 +167,8 @@ void redirect_output(vector<string> output, string location) {
 
     //enter child process
     else if (pid == 0) {
+
+        pids.push_back(pid);
         //open file
         int file_desc = open(loc, O_CREAT | O_WRONLY, 0666);
 
@@ -191,27 +201,6 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     char *argv1[cmd1.size()+1];
     char *argv2[cmd2.size()+1];
 
-    //append relevant string to const char *
-    for (string cmd : cmd1) {
-        argv1[i] = (char *)cmd.c_str();
-        i++;
-    }
-
-    //terminate with null
-    argv1[i] = NULL;
-
-    //reset index
-    i = 0;
-
-    //append relevant string to const char *
-    for (string cmd : cmd2) {
-        argv2[i] = (char *)cmd.c_str();
-        i++;
-    }
-
-    //append with null
-    argv2[i] = NULL;
-
     //return error if pipe failure
     if (pipe(p) < 0) {
         cout << "error";
@@ -222,6 +211,8 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
 
     //first child process is running
     if (p2 == 0) {
+
+        pids.push_back(p2);
 
         //have child start reading pipe
         close(p[1]);
@@ -244,6 +235,8 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
         //if child
         if (p1 == 0){
 
+            pids.push_back(p1);
+
             //have child write to pipe
             close(p[0]);
             dup2(p[1], 1);
@@ -262,13 +255,20 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     //close both pipe channels
     close(p[0]);
     close(p[1]);
-    // wait(NULL);
+    wait(NULL);
+    wait(NULL);
 
 }
 
 //handle keyboard interrupt
 void handle_signal(int signum) {
-    //do nothing
+
+    //kill foreground processes
+    for (pid_t pid : pids) {
+        kill(pid, SIGKILL);
+    }
+
+    pids.clear();
 
 }
 
@@ -276,23 +276,15 @@ void handle_signal(int signum) {
 void background_process(vector<string> input) {
 
     //init variables
-    int p;
-    pid_t pid;
-
-    //create fork
-    p = fork();
+    pid_t pid = fork();
 
     //return fork error if needed
-    if (p < 0) {
+    if (pid < 0) {
         perror("fork error");
     }
 
     //enter child process
-    if (p==0) {
-
-        //Output pid of process running
-        pid = getpid();
-        cout << "PID " << pid << " is running in the background" << "\n";
+    if (pid==0) {
 
         //close stdout and stderr
         close(1);
@@ -305,7 +297,8 @@ void background_process(vector<string> input) {
     //enter parent
     else {
 
-        //do nothing
+        cout << "PID " << pid << " is running in the background" << "\n";
+
     }
 
 }
