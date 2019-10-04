@@ -76,9 +76,12 @@ void execute(const char* cmd, vector<string> input) {
     int i = 0;
     int pid;
 
+    cout << cmd << "\n";
+
     //append command and arguments to array of character pointers
     for (string test : input) {
         argv[i] = (char *)test.c_str();
+        cout << argv[i] << "\n";
         i++;
     }
 
@@ -94,6 +97,7 @@ void execute(const char* cmd, vector<string> input) {
     else if (pid == 0) {
         //return error if necessary
         if(execve(cmd, argv, env) == -1){
+
             perror("execve");
         }
         _exit(0);
@@ -182,55 +186,59 @@ void redirect_output(vector<string> output, string location) {
 
 }
 
-void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
+void execute_pipe() {
+    cout << "start pipe";
     //declare and inititialize variables
     int p[2];
     int p1,p2;
     int i = 0;
-    char *argv1[cmd1.size()+1];
-    char *argv2[cmd2.size()+1];
-    char *env[] = {NULL};
+    // char *argv1[cmd1.size()+1];
+    // char *argv2[cmd2.size()+1];
+    char *env[]={NULL};
 
 
-    for (string cmd : cmd1) {
-        argv1[i] = (char *)cmd.c_str();
-        i++;
-    }
+    // for (string cmd : cmd1) {
+    //     argv1[i] = (char *)cmd.c_str();
+    //     i++;
+    // }
+    //
+    // argv1[i] = NULL;
+    // i = 0;
+    //
+    //
+    //
+    // for (string cmd : cmd2) {
+    //     argv2[i] = (char *)cmd.c_str();
+    //     cout << argv2[i] << "\n";
+    //     i++;
+    // }
 
-    argv1[i] = NULL;
-    i = 0;
-
-
-
-    for (string cmd : cmd2) {
-        argv2[i] = (char *)cmd.c_str();
-        i++;
-    }
-
-    argv2[i] = NULL;
+    // argv2[i] = NULL;
 
 
     if (pipe(p) < 0) {
         cout << "error";
     }
 
-    p1 = fork();
-
-
-    if (p1 < 0) {
-        cout << "fork error";
-    }
-
+    p2 = fork();
 
     //first child process is running
-    if (p1 == 0) {
-        //write process to pipe
-        close(p[0]);
-        dup2(p[1], 1);
+    if (p2 == 0) {
+
+    //write process to pipe
+
         close(p[1]);
+        dup2(p[0],0);
+        close(p[0]);
+        // close(p[0]);
+        // dup2(p[1], 1);
+        // close(p[1]);
 
+        char *argv100[]={"sort", NULL};
 
-        if (execve(argv1[0], argv1, env) < 0) {
+        // external_execution(cmd1);
+
+        if (execve("/usr/bin/sort",argv100 , env) < 0) {
             //before this should probable check if file exists
             cout << "couldn't execute process 1";
         }
@@ -238,41 +246,49 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
         _exit(0);
     }
 
-
-    //parent process
     else {
-        //create second child
-        p2 = fork();
 
-        if (p2 < 1) {
-            cout << "fork error";
-        }
+        p1 = fork();
 
-        //child process is running
-        if (p2 == 0){
-            //only need to acess read end
-            close(p[1]);
-            dup2(p[0],1);
+        if (p1 == 0){
+
+            close(p[0]);
+            dup2(p[1], 1);
             close(p[1]);
 
-            if (execve(argv2[0], argv2,env) < 0) {
-                 cout << "couldn't execute process 2";
+            // external_execution(cmd2);
+
+            char *argv200[]={"find","./", NULL};
+
+            if (execve("/usr/bin/find", argv200 , env) < 0) {
+                //before this should probable check if file exists
+                cout << "couldn't execute process 1";
             }
 
             _exit(0);
 
-        } else {
-            //parrent is executing
-            //wait for two children
-            wait(NULL);
-
-            wait(NULL);
-
         }
 
     }
+
+    close(p[0]);
+    close(p[1]);
+    wait(NULL);
+
+
 }
 
 void handle_signal(int signum) {
-    cout << "wow";
+
+
+}
+
+void background_process(vector<string> input) {
+
+    //when you enter child
+    // close stdout, stderror
+    // dont have wait in parent
+
+
+
 }

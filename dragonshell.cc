@@ -7,6 +7,7 @@
 #include "handler.h"
 #include <typeinfo>
 #include <csignal>
+#include <fstream>
 
 //set namespace
 using namespace std;
@@ -69,11 +70,27 @@ bool check_pipe(vector<string> input) {
     return pipe;
 }
 
+bool check_background(vector<string> input) {
+
+    //initializes bool to false
+    bool background = false;
+
+    //iterates through input
+    for (string token: input) {
+        if (token == "&") {
+            background = true;
+        }
+    }
+
+    //returns bool
+    return background;
+}
+
+
 
 
 //function to run dragon shell
 void loop(void){
-
 
     //declare variables
     char input[256];
@@ -103,11 +120,16 @@ void loop(void){
             //check if pipe needed
             bool pipe = check_pipe(input_list);
 
-            if (input_list[0] == "^C") {
-                cout << "wow";
-            }
+            //check if need to run background process
+            bool background = check_background(input_list);
 
             //handle redirect
+            if (background) {
+
+                
+
+            }
+
             else if (redirect) {
                 vector<string> output = tokenize(input, ">");
                 vector<string> command = tokenize(output[0], " ");
@@ -117,11 +139,12 @@ void loop(void){
 
             //handle pipe
             else if (pipe) {
-                
-                vector<string> output = tokenize(input, "|");
-                vector<string> cmd1 = tokenize(output[0], " ");
-                vector<string> cmd2 = tokenize(output[1], " ");
-                execute_pipe(cmd1, cmd2);
+                cout << "enter";
+
+                // vector<string> output = tokenize(input, "|");
+                // vector<string> cmd1 = tokenize(output[0], " ");
+                // vector<string> cmd2 = tokenize(output[1], " ");
+                execute_pipe();
             }
 
             //hanlde pwd
@@ -181,13 +204,14 @@ int main(int argc, char **argv) {
   // do this in a loop
 
   //signal handling
-  struct sigaction sa;
-  sa.sa_handler = &handle_signal;
+  struct sigaction c,z;
+
+  c.sa_flags = SA_RESTART;
   sigemptyset(&sa.sa_mask);
-  sa.sa_flags = 0;
+  sa.sa_handler = &handle_signal;
 
   if (sigaction(SIGINT, &sa, NULL) == -1) {
-      cout << "signal error";
+      perror("sigaction");
   }
 
 
