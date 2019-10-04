@@ -105,6 +105,13 @@ void loop(void){
         //get input
         cin.getline(input,sizeof(input));
 
+        // fgets(input, 256, stdin);
+        //
+        // int len = strlen(input);
+        //
+        // input[len-1] = '\0';
+
+
         //tokenize input for multiple commands
         actions = tokenize(input, ";");
 
@@ -223,7 +230,16 @@ int main(int argc, char **argv) {
   //call function to start dragonshell
   loop();
 
-
-
   return 0;
 }
+
+
+//TO DO
+// - handle signal so dont need to press enter
+// - fix pipe so dont need to press enter
+// - fix background process so don't need to press enter
+// - fix multiple commands so it works
+// - fix exit so it gracefull terminates the program
+// - fix makefile
+// - handle ^Z interrupt
+// - review assignment spec

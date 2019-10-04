@@ -182,6 +182,7 @@ void redirect_output(vector<string> output, string location) {
 
 }
 
+//function to handle pipe
 void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     //declare and inititialize variables
     int p[2];
@@ -190,81 +191,98 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     char *argv1[cmd1.size()+1];
     char *argv2[cmd2.size()+1];
 
+    //append relevant string to const char *
     for (string cmd : cmd1) {
         argv1[i] = (char *)cmd.c_str();
         i++;
     }
 
+    //terminate with null
     argv1[i] = NULL;
+
+    //reset index
     i = 0;
 
-
+    //append relevant string to const char *
     for (string cmd : cmd2) {
         argv2[i] = (char *)cmd.c_str();
-        cout << argv2[i] << "\n";
         i++;
     }
 
+    //append with null
     argv2[i] = NULL;
 
-
+    //return error if pipe failure
     if (pipe(p) < 0) {
         cout << "error";
     }
 
+    //fork
     p2 = fork();
 
     //first child process is running
     if (p2 == 0) {
 
-    //write process to pipe
-
+        //have child start reading pipe
         close(p[1]);
         dup2(p[0],0);
         close(p[0]);
 
+        //execute command that requires input
         external_execution(cmd2);
 
+        //exit process
         _exit(0);
     }
 
+    //if parent
     else {
 
+        //create fork
         p1 = fork();
 
+        //if child
         if (p1 == 0){
 
+            //have child write to pipe
             close(p[0]);
             dup2(p[1], 1);
             close(p[1]);
 
+            //execute command that creates input for other command
             external_execution(cmd1);
 
+            //exit process
             _exit(0);
 
         }
 
     }
 
+    //close both pipe channels
     close(p[0]);
     close(p[1]);
     // wait(NULL);
 
 }
 
+//handle keyboard interrupt
 void handle_signal(int signum) {
-
+    //do nothing
 
 }
 
+//function to run process in background
 void background_process(vector<string> input) {
 
+    //init variables
     int p;
     pid_t pid;
 
+    //create fork
     p = fork();
 
-
+    //return fork error if needed
     if (p < 0) {
         perror("fork error");
     }
@@ -272,26 +290,22 @@ void background_process(vector<string> input) {
     //enter child process
     if (p==0) {
 
-        //close stdout and stderr
-
+        //Output pid of process running
         pid = getpid();
-
         cout << "PID " << pid << " is running in the background" << "\n";
 
+        //close stdout and stderr
         close(1);
         close(2);
 
+        //execute process to be run in background
         external_execution(input);
 
     }
     //enter parent
     else {
 
-
-
+        //do nothing
     }
-
-
-
 
 }
