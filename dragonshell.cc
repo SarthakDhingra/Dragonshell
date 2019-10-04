@@ -86,9 +86,6 @@ bool check_background(vector<string> input) {
     return background;
 }
 
-
-
-
 //function to run dragon shell
 void loop(void){
 
@@ -96,7 +93,6 @@ void loop(void){
     char input[256];
     vector<string> input_list;
     vector<string> actions;
-    char n;
 
     //run loop for dragonshell until exit
     while(true){
@@ -106,24 +102,10 @@ void loop(void){
         //get input
         cin.getline(input,sizeof(input));
 
-        // fgets(input, 256, stdin);
-        //
-        // int len = strlen(input);
-        //
-        // input[len-1] = '\0';
-
-
         //tokenize input for multiple commands
         actions = tokenize(input, ";");
 
-        // for (string action: actions) {
-        //     if a
-        //     cout << action << "\n";
-        // }
-
         //iterate through distinct commands
-
-
         for (string action: actions) {
 
             //tokenize individual command based on space
@@ -211,6 +193,7 @@ void loop(void){
 
 }
 
+
 int main(int argc, char **argv) {
 
   // print the string prompt without a newline, before beginning to read
@@ -219,18 +202,19 @@ int main(int argc, char **argv) {
 
   //signal handling
   struct sigaction sa;
+  struct sigaction ep;
 
   sa.sa_flags = SA_RESTART;
   sigemptyset(&sa.sa_mask);
   sa.sa_handler = &handle_signal;
+
+  ep.sa_flags = SA_RESTART;
+  sigemptyset(&ep.sa_mask);
+  ep.sa_handler = &handle_signal;
+
   sigaction(SIGINT, &sa, NULL);
   sigaction(SIGTSTP, &sa, NULL);
-
-  // if (sigaction(SIGINT, &c, NULL) == -1) {
-  //     perror("sigaction");
-  // }
-
-
+  sigaction(EOF, &ep, NULL);
 
   //print welcome message
   cout << "Welcome to DragonShell!";
@@ -241,9 +225,3 @@ int main(int argc, char **argv) {
 
   return 0;
 }
-
-
-//TO DO
-// - fix multiple commands so it works
-// - fix makefile
-// - review assignment spec

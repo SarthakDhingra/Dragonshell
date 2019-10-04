@@ -196,10 +196,7 @@ void redirect_output(vector<string> output, string location) {
 void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     //declare and inititialize variables
     int p[2];
-    int p1,p2;
-    int i = 0;
-    char *argv1[cmd1.size()+1];
-    char *argv2[cmd2.size()+1];
+    pid_t p1,p2;
 
     //return error if pipe failure
     if (pipe(p) < 0) {
@@ -263,11 +260,16 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
 //handle keyboard interrupt
 void handle_signal(int signum) {
 
-    //kill foreground processes
-    for (pid_t pid : pids) {
-        kill(pid, SIGKILL);
+    if (signum == EOF) {
+        exit_program();
     }
 
+    //kill foreground processes
+    for (pid_t pid : pids) {
+        kill(pid, signum);
+    }
+
+    //clear pids global vector
     pids.clear();
 
 }
@@ -285,6 +287,8 @@ void background_process(vector<string> input) {
 
     //enter child process
     if (pid==0) {
+
+        pids.push_back(pid);
 
         //close stdout and stderr
         close(1);
