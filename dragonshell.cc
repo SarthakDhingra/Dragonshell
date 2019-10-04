@@ -101,6 +101,11 @@ void loop(void){
         cout << "dragonshell > ";
         //get input
         cin.getline(input,sizeof(input));
+        
+        if (cin.eof()){
+            exit_program();
+            return;
+        }
 
         //tokenize input for multiple commands
         actions = tokenize(input, ";");
@@ -214,7 +219,6 @@ int main(int argc, char **argv) {
 
   sigaction(SIGINT, &sa, NULL);
   sigaction(SIGTSTP, &sa, NULL);
-  sigaction(EOF, &ep, NULL);
 
   //print welcome message
   cout << "Welcome to DragonShell!";
