@@ -123,13 +123,15 @@ void loop(void){
             //check if need to run background process
             bool background = check_background(input_list);
 
-            //handle redirect
+            //handle background process running
             if (background) {
 
-                
+                input_list.pop_back();
+                background_process(input_list);
 
             }
 
+            //handle
             else if (redirect) {
                 vector<string> output = tokenize(input, ">");
                 vector<string> command = tokenize(output[0], " ");
@@ -139,12 +141,10 @@ void loop(void){
 
             //handle pipe
             else if (pipe) {
-                cout << "enter";
-
-                // vector<string> output = tokenize(input, "|");
-                // vector<string> cmd1 = tokenize(output[0], " ");
-                // vector<string> cmd2 = tokenize(output[1], " ");
-                execute_pipe();
+                vector<string> output = tokenize(input, "|");
+                vector<string> cmd1 = tokenize(output[0], " ");
+                vector<string> cmd2 = tokenize(output[1], " ");
+                execute_pipe(cmd1, cmd2);
             }
 
             //hanlde pwd
@@ -207,10 +207,10 @@ int main(int argc, char **argv) {
   struct sigaction c,z;
 
   c.sa_flags = SA_RESTART;
-  sigemptyset(&sa.sa_mask);
-  sa.sa_handler = &handle_signal;
+  sigemptyset(&c.sa_mask);
+  c.sa_handler = &handle_signal;
 
-  if (sigaction(SIGINT, &sa, NULL) == -1) {
+  if (sigaction(SIGINT, &c, NULL) == -1) {
       perror("sigaction");
   }
 
