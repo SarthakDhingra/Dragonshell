@@ -101,7 +101,7 @@ void loop(void){
         cout << "dragonshell > ";
         //get input
         cin.getline(input,sizeof(input));
-        
+
         if (cin.eof()){
             exit_program();
             return;
@@ -207,15 +207,10 @@ int main(int argc, char **argv) {
 
   //signal handling
   struct sigaction sa;
-  struct sigaction ep;
 
   sa.sa_flags = SA_RESTART;
   sigemptyset(&sa.sa_mask);
   sa.sa_handler = &handle_signal;
-
-  ep.sa_flags = SA_RESTART;
-  sigemptyset(&ep.sa_mask);
-  ep.sa_handler = &handle_signal;
 
   sigaction(SIGINT, &sa, NULL);
   sigaction(SIGTSTP, &sa, NULL);

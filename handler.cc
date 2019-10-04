@@ -51,6 +51,8 @@ void exit_program(){
 
     cout << "Exiting\n";
 
+    _exit(0);
+
 }
 
 //function to display path
@@ -77,11 +79,13 @@ void show_path() {
 //function to execute command
 void execute(const char* cmd, vector<string> input) {
 
+
+
     //declare / initialize variables
     char *argv[input.size()+1];
     char *env[] = {NULL};
     int i = 0;
-    pid_t pid;
+    int pid;
 
     //append command and arguments to array of character pointers
     for (string test : input) {
@@ -92,14 +96,22 @@ void execute(const char* cmd, vector<string> input) {
     //terminatate array with null
     argv[i] = NULL;
 
+    pid = fork();
+
+
+
     //if error in fork return error
-    if ((pid = fork()) == -1) {
-        perror("fork error");
-    }
+    // if (pid == -1) {
+    //     perror("fork error");
+    // }
+
 
     //enter child process
-    else if (pid == 0) {
+    if (pid == 0) {
+
         pids.push_back(pid);
+
+
         //return error if necessary
         if(execve(cmd, argv, env) == -1){
             perror("execve");
@@ -119,6 +131,8 @@ void execute(const char* cmd, vector<string> input) {
 //function to handle external program execution
 void external_execution(vector<string> input) {
     //declare and initialize things
+
+
     const char* cmd_1 = input[0].c_str();
     const char* cmd_2;
     int succ = 0;
@@ -135,6 +149,7 @@ void external_execution(vector<string> input) {
         cmd_2 = wow.c_str();
 
         if (access(cmd_2, F_OK) == 0){
+
             succ = 1;
             execute(cmd_2, input);
             break;
@@ -259,10 +274,6 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
 
 //handle keyboard interrupt
 void handle_signal(int signum) {
-
-    if (signum == EOF) {
-        exit_program();
-    }
 
     //kill foreground processes
     for (pid_t pid : pids) {
