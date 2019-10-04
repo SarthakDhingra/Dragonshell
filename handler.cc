@@ -35,7 +35,7 @@ void change_directory(char const *path){
 
     //return error if necessary
     if (dir < 0) {
-        cout << "No such file or directory\n";
+        cout << "No such file or directorysss\n";
     }
 }
 
@@ -46,7 +46,7 @@ void exit_program(){
     for (pid_t pid: pids) {
         kill(pid, SIGTERM);
     }
-    
+
     pids.clear();
 
     cout << "Exiting\n";

@@ -116,7 +116,14 @@ void loop(void){
         //tokenize input for multiple commands
         actions = tokenize(input, ";");
 
+        // for (string action: actions) {
+        //     if a
+        //     cout << action << "\n";
+        // }
+
         //iterate through distinct commands
+
+
         for (string action: actions) {
 
             //tokenize individual command based on space
@@ -141,7 +148,7 @@ void loop(void){
 
             //handle
             else if (redirect) {
-                vector<string> output = tokenize(input, ">");
+                vector<string> output = tokenize(action, ">");
                 vector<string> command = tokenize(output[0], " ");
                 vector<string> location = tokenize(output[1], " ");
                 redirect_output(command, location[0]);
@@ -149,7 +156,7 @@ void loop(void){
 
             //handle pipe
             else if (pipe) {
-                vector<string> output = tokenize(input, "|");
+                vector<string> output = tokenize(action, "|");
                 vector<string> cmd1 = tokenize(output[0], " ");
                 vector<string> cmd2 = tokenize(output[1], " ");
                 execute_pipe(cmd1, cmd2);
@@ -199,7 +206,6 @@ void loop(void){
             }
 
         }
-
 
     }
 
