@@ -1,6 +1,8 @@
 ### Design Choices
 - this program was executed procedurally
 - if statements were used to handle the input
+- one file was used to simplify Makefile
+- when possible, separate functions were created for tasks to containerize code
 
 #### System calls used
 - execve()
@@ -18,7 +20,7 @@
 - chdir()
 
 ### Testing implementation
-- Generated combinations of various linux commands and also tested 
+- Generated combinations of various linux commands to test on Dragonshell
 
 ### Sources
 - http://man7.org/linux/man-pages//man2/

@@ -1,13 +1,9 @@
 Makefile
-anshil.txt
 dragonshell
 dragonshell.cc
 dragonshell.o
 dragonshell.tar.gz
 handler.cc
 handler.h
-handler.o
 readme.md
-test.cc
 tester.txt
-wow.txt

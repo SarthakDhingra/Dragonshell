@@ -41,13 +41,13 @@ std::vector<std::string> tokenize(const std::string &str, const char *delim) {
 }
 
 
-//declare / initialize variables
-char cwd[256];
+//declare / initialize global variables
 vector<string> path = {"/bin/","/usr/bin/"};
 vector<pid_t> pids = {};
 
 //function to handle pwd
 void pwd(){
+    char cwd[256];
 
     //get cwd using getwd system call
     getcwd(cwd, sizeof(cwd));
@@ -78,10 +78,13 @@ void exit_program(){
         kill(pid, SIGTERM);
     }
 
+    //clear vector of pids
     pids.clear();
 
+    //print exist statement
     cout << "Exiting\n";
 
+    //terminate
     _exit(0);
 
 }
@@ -125,19 +128,23 @@ void execute(const char* cmd, vector<string> input) {
     //terminatate array with null
     argv[i] = NULL;
 
+    //create fork
     pid = fork();
 
 
     //enter child process
     if (pid == 0) {
 
+        //add pids to global vector
         pids.push_back(pid);
 
 
-        //return error if necessary
+        //execute cmd and return error if needed
         if(execve(cmd, argv, env) == -1){
             perror("execve");
         }
+
+        //terminate
         _exit(0);
 
     }
@@ -152,16 +159,15 @@ void execute(const char* cmd, vector<string> input) {
 
 //function to handle external program execution
 void external_execution(vector<string> input) {
+
     //declare and initialize things
-
-
     const char* cmd_1 = input[0].c_str();
     const char* cmd_2;
-    int succ = 0;
+    int success = 0;
 
     //check if commands exists in cwd, if so execute
     if (access(cmd_1, F_OK) == 0){
-        succ = 1;
+        success = 1;
         execute(cmd_1, input);
     }
 
@@ -170,9 +176,10 @@ void external_execution(vector<string> input) {
         wow += cmd_1;
         cmd_2 = wow.c_str();
 
+        //check if command exists in path
         if (access(cmd_2, F_OK) == 0){
-
-            succ = 1;
+            //execute command
+            success = 1;
             execute(cmd_2, input);
             break;
         }
@@ -180,7 +187,7 @@ void external_execution(vector<string> input) {
     }
 
     //report error if command doesnt exist
-    if (!succ) {
+    if (!success) {
         cout << "dragonshell: Command not found\n";
     }
 }
@@ -205,7 +212,9 @@ void redirect_output(vector<string> output, string location) {
     //enter child process
     else if (pid == 0) {
 
+        //append pid to global vector
         pids.push_back(pid);
+
         //open file
         int file_desc = open(loc, O_CREAT | O_WRONLY, 0666);
 
@@ -231,6 +240,7 @@ void redirect_output(vector<string> output, string location) {
 
 //function to handle pipe
 void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
+
     //declare and inititialize variables
     int p[2];
     pid_t p1,p2;
@@ -246,6 +256,7 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     //first child process is running
     if (p2 == 0) {
 
+        //append pid to global vector
         pids.push_back(p2);
 
         //have child start reading pipe
@@ -269,6 +280,7 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
         //if child
         if (p1 == 0){
 
+            //append pids to global vector
             pids.push_back(p1);
 
             //have child write to pipe
@@ -289,6 +301,8 @@ void execute_pipe(vector<string> cmd1, vector<string> cmd2) {
     //close both pipe channels
     close(p[0]);
     close(p[1]);
+
+    //wait for processes
     wait(NULL);
     wait(NULL);
 
@@ -311,7 +325,6 @@ void background_process(vector<string> input) {
     //init variables
     pid_t pid = fork();
 
-
     //return fork error if needed
     if (pid < 0) {
         perror("fork error");
@@ -320,19 +333,20 @@ void background_process(vector<string> input) {
     //enter child process
     if (pid==0) {
 
-        pids.push_back(pid);
-
         //close stdout and stderr
         close(1);
         close(2);
 
-
+        //execute command
         external_execution(input);
 
     }
     //enter parent
     else {
+        //append pid to global vector
         pids.push_back(pid);
+
+        //output background message
         cout << "PID " << pid << " is running in the background" << "\n";
 
     }
@@ -373,6 +387,7 @@ bool check_pipe(vector<string> input) {
     return pipe;
 }
 
+//returns true if input has ampersand and false otherwise
 bool check_background(vector<string> input) {
 
     //initializes bool to false
@@ -405,6 +420,7 @@ void loop(void){
         //get input
         cin.getline(input,sizeof(input));
 
+        //if ctrl D EOF signal received handle
         if (cin.eof()){
             exit_program();
             return;
@@ -428,15 +444,17 @@ void loop(void){
             //check if need to run background process
             bool background = check_background(input_list);
 
-            //handle background process running
+            //handle background process
             if (background) {
 
+                //remove ampersand
                 input_list.pop_back();
+                //execute background process
                 background_process(input_list);
 
             }
 
-            //handle
+            //handle redirect
             else if (redirect) {
                 vector<string> output = tokenize(action, ">");
                 vector<string> command = tokenize(output[0], " ");
@@ -488,6 +506,7 @@ void loop(void){
                     cout << "error not enough arguments" << "\n";
                 }
 
+                //append new path to $PATH
                 vector<string> new_path = tokenize(input_list[1],":");
                 append_path(new_path[1]);
             }
@@ -504,7 +523,7 @@ void loop(void){
 
 }
 
-
+//main function
 int main(int argc, char **argv) {
 
   // print the string prompt without a newline, before beginning to read
