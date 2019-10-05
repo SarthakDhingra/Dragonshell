@@ -35,7 +35,7 @@ void change_directory(char const *path){
 
     //return error if necessary
     if (dir < 0) {
-        cout << "No such file or directorysss\n";
+        cout << "dragonshell: No such file or directory\n";
     }
 }
 
@@ -44,6 +44,7 @@ void exit_program(){
 
     //print message
     for (pid_t pid: pids) {
+        cout << pid;
         kill(pid, SIGTERM);
     }
 
@@ -79,13 +80,11 @@ void show_path() {
 //function to execute command
 void execute(const char* cmd, vector<string> input) {
 
-
-
     //declare / initialize variables
     char *argv[input.size()+1];
     char *env[] = {NULL};
     int i = 0;
-    int pid;
+    pid_t pid;
 
     //append command and arguments to array of character pointers
     for (string test : input) {
@@ -97,13 +96,6 @@ void execute(const char* cmd, vector<string> input) {
     argv[i] = NULL;
 
     pid = fork();
-
-
-
-    //if error in fork return error
-    // if (pid == -1) {
-    //     perror("fork error");
-    // }
 
 
     //enter child process
@@ -159,7 +151,7 @@ void external_execution(vector<string> input) {
 
     //report error if command doesnt exist
     if (!succ) {
-        cout << "Error: Program not found";
+        cout << "dragonshell: Command not found\n";
     }
 }
 
@@ -280,8 +272,6 @@ void handle_signal(int signum) {
         kill(pid, signum);
     }
 
-    //clear pids global vector
-    pids.clear();
 
 }
 
@@ -311,7 +301,7 @@ void background_process(vector<string> input) {
     }
     //enter parent
     else {
-
+        pids.push_back(pid);
         cout << "PID " << pid << " is running in the background" << "\n";
 
     }

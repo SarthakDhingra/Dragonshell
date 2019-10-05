@@ -1,6 +1,7 @@
 ### Design Choices
 - this program was executed procedurally
 - if statements were used to handle the input
+
 #### System calls used
 - execve()
 - access()
@@ -17,7 +18,7 @@
 - chdir()
 
 ### Testing implementation
-- 
+- Generated combinations of various linux commands and also tested 
 
 ### Sources
 - http://man7.org/linux/man-pages//man2/
