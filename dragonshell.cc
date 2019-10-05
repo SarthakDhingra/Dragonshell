@@ -311,6 +311,7 @@ void background_process(vector<string> input) {
     //init variables
     pid_t pid = fork();
 
+
     //return fork error if needed
     if (pid < 0) {
         perror("fork error");
@@ -325,7 +326,7 @@ void background_process(vector<string> input) {
         close(1);
         close(2);
 
-        //execute process to be run in background
+
         external_execution(input);
 
     }
