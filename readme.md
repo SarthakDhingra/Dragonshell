@@ -1,7 +1,7 @@
 # DragonShell
 ![Screenshot](img/dragonshell.png)
 
-# Project Description
+### Project Description
 Dragonshell is a procedurally designed interactive UNIX-based shell program
 
 The following features are supported:
@@ -19,7 +19,7 @@ program can be located in the path or in the present working directory.
 - Support piping the output of one program to another program.
 - Handle signals (Ctrl-C, Ctrl-Z, and Ctrl-D)
 
-#### System calls used
+### System calls used
 - getcwd(): get current directory
 - chdir(): changing directories
 - execve(): execute a process
