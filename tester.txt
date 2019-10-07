@@ -1,9 +1,0 @@
-Makefile
-dragonshell
-dragonshell.cc
-dragonshell.o
-dragonshell.tar.gz
-handler.cc
-handler.h
-readme.md
-tester.txt
